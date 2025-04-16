@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getTotalUser,getTotalWallet,getTotalAsset,getTotalLabel,getTotalUserDaily,getPointsDistribution,getTop20RankingUser } from '@/api/dashboard';
+import { getTotalUser,getTotalWallet,getTotalAsset,getTotalLabel,getTotalUserDaily,getPointsDistribution,getTop20RankingUser,getAssetScale } from '@/api/dashboard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, ComposedChart, Area } from 'recharts';
 
 const DashboardPage: React.FC = () => {
@@ -12,6 +12,7 @@ const DashboardPage: React.FC = () => {
   const [dailyUserData, setDailyUserData] = useState<any[]>([]);
   const [pointsDistributionData, setPointsDistributionData] = useState<any[]>([]);
   const [top20RankingUserData, setTop20RankingUserData] = useState<any[]>([]);
+  const [assetScaleData, setAssetScaleData] = useState<any[]>([]);
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   useEffect(() => {
@@ -19,14 +20,17 @@ const DashboardPage: React.FC = () => {
       try {
         setLoading(true);
         setIsVisible(false);
-        const [walletRes, userRes, assetRes, labelRes, dailyUserRes, pointsDistRes,top20RankingUserRes] = await Promise.all([
+        const [walletRes, userRes, assetRes, labelRes, dailyUserRes, pointsDistRes,top20RankingUserRes,assetScaleRes] = await Promise.all([
           getTotalWallet(),
           getTotalUser(),
           getTotalAsset(),
           getTotalLabel(),
           getTotalUserDaily(),
           getPointsDistribution(),
-          getTop20RankingUser()
+          getTop20RankingUser(),
+          getAssetScale({
+            "date": "2025-04-15"
+          })
         ]);
 
         setTotalWallet(walletRes.data.totalWallets);
@@ -35,7 +39,8 @@ const DashboardPage: React.FC = () => {
         setTotalLabel(labelRes.data.totalLabels);
         setDailyUserData(dailyUserRes.data);
         setPointsDistributionData(pointsDistRes.data);
-        setTop20RankingUserData(top20RankingUserRes.data);
+        setTop20RankingUserData(top20RankingUserRes.data || []);
+        setAssetScaleData(assetScaleRes.data);
         setError(null);
         
         // 添加一个小的延迟，让过渡效果更自然
@@ -54,10 +59,10 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   const summaryData = [
-    { title: '总用户', value: loading ? '加载中...' : error ? '获取失败' : totalUser, icon: '👥' },
-    { title: '总钱包', value: loading ? '加载中...' : error ? '获取失败' : totalWallet, icon: '💼' },
-    { title: '总资产', value: loading ? '加载中...' : error ? '获取失败' : totalAsset, icon: '💰' },
-    { title: '总标签', value: loading ? '加载中...' : error ? '获取失败' : totalLabel, icon: '🏷️' },
+    { title: 'Total Users', value: loading ? '加载中...' : error ? '获取失败' : totalUser, icon: '👥' },
+    { title: 'Total Wallets', value: loading ? '加载中...' : error ? '获取失败' : totalWallet, icon: '💼' },
+    { title: 'Total Assets', value: loading ? '加载中...' : error ? '获取失败' : totalAsset, icon: '💰' },
+    { title: 'Total Labels', value: loading ? '加载中...' : error ? '获取失败' : totalLabel, icon: '🏷️' },
   ];
 
   const assetData = [
@@ -71,7 +76,7 @@ const DashboardPage: React.FC = () => {
     <div className="min-h-screen text-white p-6">
       <div className="relative z-10">
         <h1 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
-          Web3 数据看板
+          Dashboard
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -101,14 +106,14 @@ const DashboardPage: React.FC = () => {
           style={{ transitionDelay: '400ms' }}>
             <h2 className="text-lg font-semibold text-gray-300 mb-4 flex items-center">
               <span className="w-2 h-2 bg-cyan-500 rounded-full mr-2"></span>
-              总用户 (每日)
+              Total Users (Daily)
             </h2>
             <div className="h-60">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={dailyUserData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                  <XAxis dataKey="date" stroke="#ffffff50" />
-                  <YAxis stroke="#ffffff50" />
+                  <XAxis dataKey="registerDate" stroke="#ffffff50" />
+                  <YAxis stroke="#ffffff50" allowDecimals={false} />
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -118,7 +123,7 @@ const DashboardPage: React.FC = () => {
                   />
                   <Line 
                     type="monotone" 
-                    dataKey="users" 
+                    dataKey="userCount" 
                     stroke="#22d3ee" 
                     strokeWidth={2}
                     dot={{ fill: '#22d3ee', r: 4 }}
@@ -135,14 +140,14 @@ const DashboardPage: React.FC = () => {
           style={{ transitionDelay: '500ms' }}>
             <h2 className="text-lg font-semibold text-gray-300 mb-4 flex items-center">
               <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-              资产规模
+              Asset Size
             </h2>
             <div className="h-60">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={assetData}>
+                <BarChart data={assetScaleData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                  <XAxis dataKey="name" stroke="#ffffff50" />
-                  <YAxis stroke="#ffffff50" />
+                  <XAxis dataKey="todayDate" stroke="#ffffff50" />
+                  <YAxis dataKey="totalAssetScales" stroke="#ffffff50" />
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -151,15 +156,9 @@ const DashboardPage: React.FC = () => {
                     }}
                   />
                   <Bar 
-                    dataKey="value" 
+                    dataKey="totalAssetScales" 
                     stackId="a" 
                     fill="#a855f7" 
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <Bar 
-                    dataKey="other" 
-                    stackId="a" 
-                    fill="#7e22ce" 
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
@@ -175,7 +174,7 @@ const DashboardPage: React.FC = () => {
           style={{ transitionDelay: '600ms' }}>
             <h2 className="text-lg font-semibold text-gray-300 mb-4 flex items-center">
               <span className="w-2 h-2 bg-cyan-500 rounded-full mr-2"></span>
-              积分排行榜
+              Points Ranking
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -215,7 +214,7 @@ const DashboardPage: React.FC = () => {
           style={{ transitionDelay: '700ms' }}>
             <h2 className="text-lg font-semibold text-gray-300 mb-4 flex items-center">
               <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-              积分分布
+              Points Distribution
             </h2>
             <div className="h-[340px]">
               <ResponsiveContainer width="100%" height="100%">

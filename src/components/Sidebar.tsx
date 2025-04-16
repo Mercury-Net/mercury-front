@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom'; // Import NavLink for active state styling
+import fintax_logowhite from '@/assets/logo/logo_colorfulwhite.svg';
 
 // TODO: Add actual navigation paths
 const Sidebar: React.FC = () => {
@@ -9,7 +10,7 @@ const Sidebar: React.FC = () => {
   return (
     <div className="w-64 h-screen bg-black text-gray-300 p-4 fixed top-0 left-0 border-r border-cyan-500/30 shadow-[4px_0px_15px_-3px_rgba(6,182,212,0.3)]">
       <h2 className="text-xl font-bold mb-8 text-center bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-        Fintax
+        TAIX
       </h2>
       <nav>
         <ul>
@@ -21,7 +22,7 @@ const Sidebar: React.FC = () => {
                 `${baseLinkClassName} ${isActive ? activeClassName : ''}`
               }
             >
-              首页
+              Dashboard
             </NavLink>
           </li>
           <li className="mb-3">
@@ -31,19 +32,19 @@ const Sidebar: React.FC = () => {
                 `${baseLinkClassName} ${isActive ? activeClassName : ''}`
               }
             >
-              个人积分
+              Points
             </NavLink>
           </li>
-          <li className="mb-3">
+          {/* <li className="mb-3">
             <NavLink
               to="/settings" // Example path
               className={({ isActive }) =>
                 `${baseLinkClassName} ${isActive ? activeClassName : ''}`
               }
             >
-              设置
+              Settings
             </NavLink>
-          </li>
+          </li> */}
         </ul>
       </nav>
     </div>
