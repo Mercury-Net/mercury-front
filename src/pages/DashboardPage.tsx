@@ -28,9 +28,7 @@ const DashboardPage: React.FC = () => {
           getTotalUserDaily(),
           getPointsDistribution(),
           getTop20RankingUser(),
-          getAssetScale({
-            "date": "2025-04-15"
-          })
+          getAssetScale()
         ]);
 
         setTotalWallet(walletRes.data.totalWallets);
@@ -140,7 +138,7 @@ const DashboardPage: React.FC = () => {
           style={{ transitionDelay: '500ms' }}>
             <h2 className="text-lg font-semibold text-gray-300 mb-4 flex items-center">
               <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-              Asset Size
+              Asset Scale
             </h2>
             <div className="h-60">
               <ResponsiveContainer width="100%" height="100%">
@@ -221,16 +219,24 @@ const DashboardPage: React.FC = () => {
                 <BarChart data={pointsDistributionData} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
                   <XAxis type="number" stroke="#ffffff50" allowDecimals={false} />
-                  <YAxis dataKey="name" type="category" stroke="#ffffff50" />
+                  <YAxis 
+                    type="category" 
+                    stroke="#ffffff50"
+                    tickFormatter={(value, index) => {
+                      const item = pointsDistributionData[index];
+                      return `${item.rangeEnd}`;
+                    }}
+                  />
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: 'rgba(0, 0, 0, 0.8)',
                       border: '1px solid rgba(255, 255, 255, 0.1)',
                       borderRadius: '8px'
                     }}
+                    labelFormatter={() => ''}
                   />
                   <Bar 
-                    dataKey="userCount" 
+                    dataKey="userCount"
                     fill="#a855f7" 
                     radius={[0, 4, 4, 0]}
                   />

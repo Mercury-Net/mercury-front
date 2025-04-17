@@ -160,7 +160,7 @@ const PointsPage: React.FC = () => {
               onClick={() => isLoggedIn ? handleLogout() : setShowLoginModal(true)}
               className="px-6 py-3 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 hover:bg-blue-500/30 transition-all duration-300"
             >
-              {isLoggedIn ? 'Logout' : 'Login Fintax'}
+              {isLoggedIn ? 'Logout' : 'Login Mercury'}
             </button>
           </div>
         </div>

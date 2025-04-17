@@ -10,7 +10,7 @@ const Sidebar: React.FC = () => {
   return (
     <div className="w-64 h-screen bg-black text-gray-300 p-4 fixed top-0 left-0 border-r border-cyan-500/30 shadow-[4px_0px_15px_-3px_rgba(6,182,212,0.3)]">
       <h2 className="text-xl font-bold mb-8 text-center bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-        TAIX
+      Mercury
       </h2>
       <nav>
         <ul>

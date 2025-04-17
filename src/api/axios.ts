@@ -5,7 +5,7 @@ import { encrypt, decrypt } from '../utils/jsencrypt';
 // 创建 axios 实例
 const instance = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://192.168.1.113:8080/api',
-  timeout: 10000,
+  timeout: 100000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -57,28 +57,13 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   (response) => {
+    if(response.data.code === 401){
+      localStorage.removeItem('token');
+      window.location.href = '/points';
+    }
     return response.data;
   },
   (error) => {
-    // 在这里可以处理错误响应
-    if (error.response) {
-      switch (error.response.status) {
-        case 401:
-          // 处理未授权的情况
-          localStorage.removeItem('token');
-          window.location.href = '/login';
-          break;
-        case 403:
-          // 处理禁止访问的情况
-          break;
-        case 404:
-          // 处理资源不存在的情况
-          break;
-        default:
-          // 处理其他错误
-          break;
-      }
-    }
     return Promise.reject(error);
   }
 );
